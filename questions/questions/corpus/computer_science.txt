@@ -1,0 +1,61 @@
+Computer science is the study of computer hardware and software. When you enroll in a degree program, you can choose from many specialized areas of study, from artificial intelligence and cryptography to computer engineering and software development.
+
+Computer science graduates work in various settings, including computer software companies, game development, financial services, and government. They also work in research and for social media companies and manufacturers, to name a few. 
+
+What is computer science: Industry overview
+Technology is ever-changing, and for those working in computer science, it means keeping abreast of those developments. One of the most significant examples is artificial intelligence (AI). The purpose of AI is to mimic human intelligence, used in automotive, retail, health care, and sports industries. 
+
+The manufacturing industry develops and manufactures 3D printers for the medical community, dentistry, and architecture. Companies such as Nike and Ford Motor Company are among the top users of 3D technology.
+
+Robotics uses AI and other technologies to complete tasks that might otherwise be too dangerous for humans to perform. The medical field and automobile manufacturing industry both use robots. Along with the safety advantages, robotics can increase productivity.
+
+Computer vision and natural language processing are the technologies that allow phones to recognize faces and Siri to understand commands. Alexa is another example of voice recognition technology. Self-driving cars, the health care field, and law enforcement currently use computer vision. These are just a few examples of computer science and evolving technological changes.
+
+Strong growth expected
+According to the US Bureau of Labor Statistics (BLS), the computer science industry is projected to grow 15 percent through 2031 [1].
+
+This is faster than average for all occupations. Industries using computer science majors include security, health care, government, education, and agriculture.
+
+
+What do computer scientists earn?
+The salary you can earn as a computer scientist depends on the industry. According to the BLS, the annual median wage for computer and information technology occupations is $97,430 as of May 2021 [1].
+
+The BLS reports a high median salary of $131,490 for computer and information research scientists with a master's degree and $120,520 for computer network architects with a bachelor's degree. Network and computer systems administrators earn a median wage of $80,600 for those with a bachelor’s degree, and computer support specialists, who are not always required to have a degree, earn a median wage of $57,910 [1].
+
+Common computer science jobs
+You may want to enter one of the more common fields when exploring potential computer science careers. Among them are UX design, web development, and mobile app development. 
+
+Computer hardware and software engineers are among the customary positions for computer scientists. You may also find yourself working in other fields, such as: 
+
+AI Engineering: Artificial intelligence engineers create computer systems that can do the tasks that humans would otherwise do. 
+
+Information security analyst: This position requires you to ensure computer network security. 
+
+Computer science teacher: If you love to teach others about computer science, you can earn a teaching certification and work in secondary education. 
+
+IT project manager: A project manager leads a team of computer professionals in projects from conception to completion.
+
+Different disciplines within computer science
+As a computer science student, you can choose a major that best meets your interests and career goals. Whether your goal is to work as a computer programmer or your interest is in software development, a degree in computer science will provide you with the foundation needed to enter the workforce.
+
+Many schools offer internships so you can gain hands-on experience and begin building your resume. Some areas of computer science are:
+
+Software developer: As a software developer, your job will be to design computer applications. Most positions require a bachelor’s degree.
+
+Computer programmer: Computer programmers write code for software programs and applications and test them for functionality.
+
+Network systems administrator: In this role, you’ll oversee the day-to-day operation of computer networks.
+
+Hardware engineer: If you’re interested in designing the parts for computers, you may want to pursue a career as a hardware engineer.
+
+Video game designer: If you enjoy working with a team of creative people, you may be interested in a career as a video game designer. Your role will be to design games for computers and other electronic devices.
+
+What skills do I need to become a computer scientist?
+A computer scientist should have a strong command of mathematical formulas and good analytical skills. Many positions require teamwork, so you’ll want to be comfortable working with others. You may work under tight deadlines, so time management skills are essential.
+
+A position in computer science requires good programming skills and knowledge of software development and coding languages. Python, Java, and JavaScript are among the essential languages to know.
+
+Building a career in computer science
+A career in computer science usually requires a bachelor’s degree, so you’ll want to begin building your resume with a solid educational foundation. You’ll benefit from science, math, and technology classes as a high school student. 
+
+You can expect a bachelor’s degree in computer science to take four years. Your first two years are typically spent taking general education coursework, and you’ll need to select your specialization. The area of computing that most interests you will determine your course of study and the electives you’ll need to complete. 
