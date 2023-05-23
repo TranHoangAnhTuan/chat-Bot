@@ -3,10 +3,14 @@ import sys
 import os
 import string
 import math
-from copy import copy
 import operator
-from nouns import extract_nouns, extract_nouns_phrase
+from nouns import *
 from nltk.corpus import stopwords
+import re
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from collections import Counter
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
@@ -24,14 +28,16 @@ def main():
         filename: tokenize(files[filename])
         for filename in files
     }
-    file_idfs = compute_idfs(copy(file_words))
-    new_ma_val = max(file_idfs.items(), key=operator.itemgetter(1))[0]
+    # file_idfs = compute_idfs(copy(file_words))
+    file_idfs = {}
+    # new_ma_val = max(file_idfs.items(), key=operator.itemgetter(1))[0]
 
     # Prompt user for query
     query = input("Query: ")
 
     # Determine top file matches according to TF-IDF
     filenames = top_files(query, file_words, file_idfs, n=FILE_MATCHES)
+    
     
     # Extract sentences from top files
     sentences = dict()
@@ -43,12 +49,20 @@ def main():
                     sentences[sentence] = tokens
 
     # Compute IDF values across sentences
-    idfs = compute_idfs(sentences)
 
     # Determine top sentence matches
-    matches = top_sentences(query, sentences, idfs, n=SENTENCE_MATCHES)
+    matches = top_sentences(query, sentences, n=SENTENCE_MATCHES)
     for match in matches:
         print(match)
+
+def is_link(string):
+    # Regular expression pattern for URL matching
+    pattern = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
+
+    if re.match(pattern, string):
+        return True
+    else:
+        return False
 
 
 def load_files(directory):
@@ -64,7 +78,7 @@ def load_files(directory):
         with open(filepath , "rb") as file:
             content = file.read()
             content = content.decode("utf-8")
-            files[filename] = content
+            files[filename] = content.lower()
 
     return files
 def have_common_char(str1, str2):
@@ -90,6 +104,8 @@ def tokenize(document):
     tokens = [token.lower() for token in tokens if token not in stop_words ]
  
     return tokens
+
+
 def compute_tf(term, documents):
     """
     Compute the term frequency of a term across all documents in a dictionary.
@@ -118,42 +134,37 @@ def compute_tf(term, documents):
     return tf
 
 
-def compute_idfs(documents):
+def compute_idfs(noun_phrases, documents):
     """
-    Given a dictionary of `documents` that maps names of documents to a list
-    of words, return a dictionary that maps words to their IDF values.
-
-    Any word that appears in at least one of the documents should be in the
-    resulting dictionary.
-    """
-    """
-    Compute IDF (inverse document frequency) for each token in the given dictionary of tokenized documents.
+    Given a list of `noun_phrases` and a `documents` dictionary where keys are
+    document names and values are the content of each document, return a dictionary
+    of IDF values for the noun phrases.
 
     Args:
-        documents (dict): A dictionary mapping a tokenization of words with their file name.
+        noun_phrases (list): A list of noun phrases.
+        documents (dict): A dictionary containing the content of multiple documents.
 
     Returns:
-        A dictionary mapping each token to its IDF value.
+        A dictionary of IDF values mapped to the noun phrases.
     """
-    num_docs = len(documents.values())  # number of documents in the corpus
-    token_counts = {}  # keep track of how many documents each token appears in
+    num_docs = len(documents)
 
-    # iterate over each document's tokens
-    for doc_name, tokens in documents.items():
-        for token in set(tokens):
-            token_counts[token] = token_counts.get(token, 0) + 1
+    # Calculate the number of documents that contain each noun phrase
+    phrase_counts = Counter()
+    for document_content in documents.values():
+        normalized_phrases = [noun_phrase.lower() for noun_phrase in noun_phrases]
+        for phrase in normalized_phrases:
+            if phrase in document_content.lower():
+                phrase_counts[phrase] += 1
 
-    idf_values = {}  # dictionary to store the IDF values for each token
-    
-    # calculate IDF for each token
-    for token, count in token_counts.items():
-        idf_values[token] = math.log(num_docs / count) + 1
-
-    
+    # Calculate IDF for each noun phrase and store in a dictionary
+    idf_values = {}
+    for noun_phrase in noun_phrases:
+        phrase_count = phrase_counts[noun_phrase]
+        denominator = max(1, phrase_count)
+        idf_values[noun_phrase] = math.log(num_docs / denominator)
 
     return idf_values
-
-
 def top_files(query, files, idfs, n):
     """
     Given a `query` (a set of words), `files` (a dictionary mapping names of
@@ -162,37 +173,90 @@ def top_files(query, files, idfs, n):
     files that match the query, ranked according to tf-idf.      
     """
     
-    
+    raw_files = load_files(sys.argv[1])
+
     files = copy(files)
-    files_topic = {}
-    for filename in files:
-        files_topic[filename] = {}
-        NOUNS = extract_nouns(' '.join(files[filename]))
-        for word in files[filename]:
-            if word in idfs and word in NOUNS :
-                files_topic[filename][word] = idfs[word] * compute_tf(word, {filename: files[filename]})
+    # files_topic = {}
+    # for filename in files:
+    #     files_topic[filename] = {}
+    #     NOUNS = extract_nouns(' '.join(files[filename]))
+    #     for word in files[filename]:
+    #         if word in idfs and word in NOUNS :
+    #             files_topic[filename][word] = idfs[word] * compute_tf(word, {filename: files[filename]})
         
-        files_topic[filename] = dict(sorted(files_topic[filename].items(), key=lambda item: item[1], reverse=True))
+    #     files_topic[filename] = dict(sorted(files_topic[filename].items(), key=lambda item: item[1], reverse=True))
 
 
-    for name in files_topic:
-        print(list(files_topic[name].items())[:4])
+    introduction = {}
 
-        pass
-    NP_of_query = extract_nouns_phrase(query)
-    print(NP_of_query)
-    rank_core = {}
-    for name in files_topic:
-        rank_core[name] = 0
-        for topic in list(files_topic[name].items())[:4]:
-            for NP in NP_of_query:
-                for N in NP.split(" "):
-                    if topic[0] == N:
-                        rank_core[name] +=  topic[1]
+    for filename in raw_files:
+        for passage in raw_files[filename].split("\n"):
+            if is_link(passage) or len(passage) < 2:
+                continue
+            # print(passage)
+            introduction[filename] = extract_nouns_phrase(passage)
+            break
+
+    # print(extract_nouns_phrase(introduction['artificial_intelligence.txt']))
+
+
+    # remove  Det position and dup in noun pharse
+    
+    
+    for file_name in introduction:
+        introduction[file_name] = remove_duplicate_noun(introduction[file_name])
+        temp = set()
+        for np in introduction[file_name]:
+            temp.add(remove_determiners(np))
+        
+        introduction[file_name] = temp
+        temp = set()
+        
+        
+    
+    # print(remove_duplicate_noun(introduction["natural_language_processing.txt"]))
+    
+    
+    # calculate tf-idf but base on noun pharse quantity
+    top_pics = {}
+    
+    for filename in introduction:
+        introduction[filename] = remove_duplicate_noun(introduction[filename])
+        idfs = compute_idfs(introduction[filename], raw_files)
+        top_pics[filename] = {}
+        for np in introduction[filename]:
+            if len(np.split(' ') )< 2:
+                top_pics[filename][np] = raw_files[filename].count(np) * idfs[np]
+            else:
+                
+                top_pics[filename][np] = pow(raw_files[filename].count(np) , len(np.split(' ') )) * idfs[np]
+
+
+    sorted_idf_values = {}
+
+
+    
+    query = extract_nouns_phrase(query)
+    print(query)
+    docs = []
+    for doc, idf_dict in top_pics.items():
+        sorted_idf_values[doc] = dict(sorted(idf_dict.items(), key=lambda x: x[1], reverse=True))
+        
+        for noun in query:
+            if noun in list(sorted_idf_values[doc])[:2]:
+                docs.append(doc)
+                
+    print(docs[:n])
+
+    # print(sorted_idf_values['artificial_intelligence.txt']['artificial intelligence'])
+    # print(raw_files['natural_language_processing.txt'].count("natural language processing"))
+    return docs[:n]
+  
                         
+
     return sorted(rank_core.items(), key=lambda item: item[1], reverse=True)[n]
 
-def top_sentences(query, sentences, idfs, n):
+def top_sentences(query, sentences, n):
     """
     Given a `query` (a set of words), `sentences` (a dictionary mapping
     sentences to a list of their words), and `idfs` (a dictionary mapping words
@@ -200,7 +264,24 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+    
+    nouns = extract_nouns(query)
+    
+    top_sent = {}
+    for sent in sentences:
+        for noun in nouns:
+            if noun in sentences[sent]:
+                top_sent[sent] = sentences[sent]
+    
+    
+          
+    for sent in top_sent:
+        if 'released' in top_sent[sent] and '3' in top_sent[sent]:
+            print(sent)
+        
+    
+    
+    return
 
 
 if __name__ == "__main__":
