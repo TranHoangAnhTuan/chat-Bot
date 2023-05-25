@@ -112,7 +112,6 @@ def remove_duplicate_noun(list_np):
         for np in noun_phrase:
             if w.lower() in np.lower():
                 res_list.remove(w)
-                print(w)
                 break
             
                 

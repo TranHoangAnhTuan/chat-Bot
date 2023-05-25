@@ -13,7 +13,7 @@ from nltk.stem import WordNetLemmatizer
 from collections import Counter
 
 FILE_MATCHES = 1
-SENTENCE_MATCHES = 1
+SENTENCE_MATCHES = 3
 
 
 def main():
@@ -38,15 +38,16 @@ def main():
     # Determine top file matches according to TF-IDF
     filenames = top_files(query, file_words, file_idfs, n=FILE_MATCHES)
     
-    
+    print(filenames)
     # Extract sentences from top files
     sentences = dict()
     for filename in filenames:
         for passage in files[filename].split("\n"):
             for sentence in nltk.sent_tokenize(passage):
-                tokens = tokenize(sentence)
+                tokens = nltk.word_tokenize(sentence)
                 if tokens:
                     sentences[sentence] = tokens
+              
 
     # Compute IDF values across sentences
 
@@ -234,20 +235,19 @@ def top_files(query, files, idfs, n):
 
     sorted_idf_values = {}
 
-
     
-    query = extract_nouns_phrase(query)
-    print(query)
+    query = extract_pos(query)['noun']
     docs = []
     for doc, idf_dict in top_pics.items():
         sorted_idf_values[doc] = dict(sorted(idf_dict.items(), key=lambda x: x[1], reverse=True))
         
         for noun in query:
-            if noun in list(sorted_idf_values[doc])[:2]:
+            if noun.lower() in list(sorted_idf_values[doc])[:3]:
                 docs.append(doc)
+            print(list(sorted_idf_values[doc])[:3])
+
                 
     print(docs[:n])
-
     # print(sorted_idf_values['artificial_intelligence.txt']['artificial intelligence'])
     # print(raw_files['natural_language_processing.txt'].count("natural language processing"))
     return docs[:n]
@@ -265,27 +265,28 @@ def top_sentences(query, sentences, n):
     be given to sentences that have a higher query term density.
     """
     
-    nouns = extract_nouns(query)
-    
+    query = extract_pos(query)
+    print(query)
+    sent_res = []
     top_sent = {}
     for sent in sentences:
-        for noun in nouns:
-            if noun in sentences[sent]:
-                top_sent[sent] = sentences[sent]
-    
-    
-          
-    for sent in top_sent:
-        if 'released' in top_sent[sent] and '3' in top_sent[sent]:
-            print(sent)
+       
+        if query['noun'][0].lower() in sentences[sent] and query['verb'][0].lower() in sentences[sent]:
+            top_sent[sent] = sentences[sent]
+            sent_res.append(sent)
+            # print(sent)
+            
+
         
     
-    
-    return
+    return sent_res[:n]
 
 
 if __name__ == "__main__":
     main()
+    
+
+    
 
 
 
